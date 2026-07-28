@@ -1,0 +1,233 @@
+[
+  {
+    "section_id": "pg001_sec001",
+    "href": "index.html",
+    "title": "Afya na Mazingira",
+    "chapter_id": "pg001_n0003",
+    "level": 1
+  },
+  {
+    "section_id": "pg003_sec001",
+    "href": "pg003_sec001.html",
+    "title": "Yaliyomo",
+    "chapter_id": "pg003_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg006_sec001",
+    "href": "pg006_sec001.html",
+    "title": "Utangulizi",
+    "chapter_id": "pg006_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg007_sec001",
+    "href": "pg007_sec001.html",
+    "title": "Sura ya Kwanza",
+    "chapter_id": "pg007_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg008_sec001",
+    "href": "pg008_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg008_n0004",
+    "level": 2
+  },
+  {
+    "section_id": "pg009_sec002",
+    "href": "pg009_sec002.html",
+    "title": "Ninafahamu viumbehai katika mazingira yangu",
+    "chapter_id": "pg009_n0005",
+    "level": 2
+  },
+  {
+    "section_id": "pg010_sec002",
+    "href": "pg010_sec002.html",
+    "title": "Zoezi la pili",
+    "chapter_id": "pg010_n0010",
+    "level": 3
+  },
+  {
+    "section_id": "pg011_sec001",
+    "href": "pg011_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg011_n0017",
+    "level": 3
+  },
+  {
+    "section_id": "pg012_sec001",
+    "href": "pg012_sec001.html",
+    "title": "Wanyama",
+    "chapter_id": "pg012_n0006",
+    "level": 2
+  },
+  {
+    "section_id": "pg012_sec002",
+    "href": "pg012_sec002.html",
+    "title": "Viumbehai",
+    "chapter_id": "pg012_n0034",
+    "level": 3
+  },
+  {
+    "section_id": "pg013_sec001",
+    "href": "pg013_sec001.html",
+    "title": "Ninafahamu makundi ya wanyama waliopo katika mazingira yangu",
+    "chapter_id": "pg013_n0002",
+    "level": 2
+  },
+  {
+    "section_id": "pg015_sec001",
+    "href": "pg015_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg015_n0018",
+    "level": 3
+  },
+  {
+    "section_id": "pg016_sec001",
+    "href": "pg016_sec001.html",
+    "title": "Sura ya Pili",
+    "chapter_id": "pg016_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg019_sec001",
+    "href": "pg019_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg019_n0002",
+    "level": 2
+  },
+  {
+    "section_id": "pg019_sec002",
+    "href": "pg019_sec002.html",
+    "title": "Soma kisa mafunzo kifuatacho, kisha jibu maswali.",
+    "chapter_id": "pg019_n0008",
+    "level": 3
+  },
+  {
+    "section_id": "pg019_sec003",
+    "href": "pg019_sec003.html",
+    "title": "Maswali",
+    "chapter_id": "pg019_n0021",
+    "level": 3
+  },
+  {
+    "section_id": "pg020_sec001",
+    "href": "pg020_sec001.html",
+    "title": "Shughuli ya pili",
+    "chapter_id": "pg020_n0003",
+    "level": 2
+  },
+  {
+    "section_id": "pg021_sec001",
+    "href": "pg021_sec001.html",
+    "title": "Swali",
+    "chapter_id": "pg021_n0002",
+    "level": 3
+  },
+  {
+    "section_id": "pg021_sec002",
+    "href": "pg021_sec002.html",
+    "title": "Zoezi la kwanza",
+    "chapter_id": "pg021_n0010",
+    "level": 3
+  },
+  {
+    "section_id": "pg022_sec001",
+    "href": "pg022_sec001.html",
+    "title": "Ninazingatia alama za usalama katika mazingira yangu",
+    "chapter_id": "pg022_n0002",
+    "level": 2
+  },
+  {
+    "section_id": "pg024_sec001",
+    "href": "pg024_sec001.html",
+    "title": "Swali",
+    "chapter_id": "pg024_n0002",
+    "level": 3
+  },
+  {
+    "section_id": "pg026_sec001",
+    "href": "pg026_sec001.html",
+    "title": "Sura ya Tatu",
+    "chapter_id": "pg026_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg029_sec001",
+    "href": "pg029_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg029_n0003",
+    "level": 2
+  },
+  {
+    "section_id": "pg032_sec001",
+    "href": "pg032_sec001.html",
+    "title": "Shughuli ya tatu",
+    "chapter_id": "pg032_n0002",
+    "level": 2
+  },
+  {
+    "section_id": "pg032_sec002",
+    "href": "pg032_sec002.html",
+    "title": "Zoezi la kwanza",
+    "chapter_id": "pg032_n0009",
+    "level": 3
+  },
+  {
+    "section_id": "pg033_sec002",
+    "href": "pg033_sec002.html",
+    "title": "Ninasafisha mazingira yangu",
+    "chapter_id": "pg033_n0028",
+    "level": 2
+  },
+  {
+    "section_id": "pg034_sec001",
+    "href": "pg034_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg034_n0006",
+    "level": 3
+  },
+  {
+    "section_id": "pg035_sec001",
+    "href": "pg035_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg035_n0009",
+    "level": 3
+  },
+  {
+    "section_id": "pg035_sec002",
+    "href": "pg035_sec002.html",
+    "title": "Shughuli ya tano",
+    "chapter_id": "pg035_n0023",
+    "level": 2
+  },
+  {
+    "section_id": "pg036_sec001",
+    "href": "pg036_sec001.html",
+    "title": "Ninapanda miti na maua katika mazingira yangu",
+    "chapter_id": "pg036_n0007",
+    "level": 2
+  },
+  {
+    "section_id": "pg038_sec001",
+    "href": "pg038_sec001.html",
+    "title": "Maswali",
+    "chapter_id": "pg038_n0004",
+    "level": 3
+  },
+  {
+    "section_id": "pg039_sec002",
+    "href": "pg039_sec002.html",
+    "title": "Wimbo",
+    "chapter_id": "pg039_n0009",
+    "level": 3
+  },
+  {
+    "section_id": "pg040_sec002",
+    "href": "pg040_sec002.html",
+    "title": "Zoezi la tatu",
+    "chapter_id": "pg040_n0015",
+    "level": 3
+  }
+]
