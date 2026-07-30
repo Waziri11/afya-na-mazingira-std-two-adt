@@ -7,10 +7,24 @@
     "level": 1
   },
   {
+    "section_id": "pg002_sec001",
+    "href": "pg002_sec001.html",
+    "title": "Hakimiliki",
+    "chapter_id": "pg002_n0002",
+    "level": 1
+  },
+  {
     "section_id": "pg003_sec001",
     "href": "pg003_sec001.html",
     "title": "Yaliyomo",
     "chapter_id": "pg003_n0002",
+    "level": 1
+  },
+  {
+    "section_id": "pg004_sec001",
+    "href": "pg004_sec001.html",
+    "title": "Shukurani",
+    "chapter_id": "pg004_n0002",
     "level": 1
   },
   {
@@ -102,13 +116,6 @@
     "href": "pg019_sec002.html",
     "title": "Soma kisa mafunzo kifuatacho, kisha jibu maswali.",
     "chapter_id": "pg019_n0008",
-    "level": 3
-  },
-  {
-    "section_id": "pg019_sec003",
-    "href": "pg019_sec003.html",
-    "title": "Maswali",
-    "chapter_id": "pg019_n0021",
     "level": 3
   },
   {
@@ -224,8 +231,8 @@
     "level": 3
   },
   {
-    "section_id": "pg040_sec002",
-    "href": "pg040_sec002.html",
+    "section_id": "pg040_sec001",
+    "href": "pg040_sec001.html",
     "title": "Zoezi la tatu",
     "chapter_id": "pg040_n0015",
     "level": 3
