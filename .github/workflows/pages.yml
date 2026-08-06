@@ -24,10 +24,15 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare lightweight site
+        run: |
+          mkdir _site
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' --exclude='sign language videos' --exclude='content/i18n/sw/video' ./ _site/
+
       - name: Upload book
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: _site
 
   deploy:
     environment:
@@ -39,5 +44,3 @@ jobs:
       - name: Deploy book
         id: deployment
         uses: actions/deploy-pages@v5
-        with:
-          timeout: 1800000
