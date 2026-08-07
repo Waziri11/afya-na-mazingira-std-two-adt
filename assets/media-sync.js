@@ -2,6 +2,12 @@
   "use strict";
 
   const PLAY_LABELS = new Set(["Sitisha", "Pause"]);
+  const START_LABELS = new Set([
+    "Cheza",
+    "Play",
+    "Washa maandishi kwa sauti",
+  ]);
+  const PAUSE_LABELS = new Set(["Sitisha", "Pause"]);
   const STOP_LABELS = new Set(["Simamisha", "Stop"]);
   const RATE_LABELS = {
     Polepole: 0.75,
@@ -12,6 +18,7 @@
 
   let sessionActive = false;
   let updateQueued = false;
+  let deferAutomaticPauseUntil = 0;
 
   const buttonName = (button) =>
     (button?.getAttribute?.("aria-label") || button?.textContent || "").trim();
@@ -63,6 +70,7 @@
       return;
     }
 
+    if (performance.now() < deferAutomaticPauseUntil) return;
     signVideo.pause();
     if (!dialog) sessionActive = false;
   };
@@ -77,8 +85,24 @@
     "click",
     (event) => {
       const button = event.target.closest?.("button");
+      const name = buttonName(button);
+      const signVideo = video();
+
+      if (button && START_LABELS.has(name) && signVideo) {
+        if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
+        signVideo.playbackRate = selectedRate(readAloudDialog());
+        sessionActive = true;
+        deferAutomaticPauseUntil = performance.now() + 1500;
+        const playPromise = signVideo.play();
+        if (playPromise?.catch) playPromise.catch(() => {});
+      }
+
+      if (button && PAUSE_LABELS.has(name) && signVideo) {
+        deferAutomaticPauseUntil = 0;
+        signVideo.pause();
+      }
+
       if (button && STOP_LABELS.has(buttonName(button))) {
-        const signVideo = video();
         if (signVideo) {
           signVideo.pause();
           signVideo.currentTime = 0;
