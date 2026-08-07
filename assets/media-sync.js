@@ -53,6 +53,10 @@
     updateQueued = false;
     const signVideo = video();
     if (!signVideo) return;
+    signVideo.muted = true;
+    signVideo.defaultMuted = true;
+    signVideo.volume = 0;
+    signVideo.playsInline = true;
 
     const dialog = readAloudDialog();
     const buttons = Array.from(dialog?.querySelectorAll("button") || []);
@@ -89,6 +93,10 @@
       const signVideo = video();
 
       if (button && START_LABELS.has(name) && signVideo) {
+        signVideo.muted = true;
+        signVideo.defaultMuted = true;
+        signVideo.volume = 0;
+        signVideo.playsInline = true;
         if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
         signVideo.playbackRate = selectedRate(readAloudDialog());
         sessionActive = true;
@@ -110,6 +118,16 @@
         sessionActive = false;
       }
       scheduleSync();
+    },
+    true,
+  );
+
+  document.addEventListener(
+    "volumechange",
+    (event) => {
+      if (event.target?.tagName !== "VIDEO") return;
+      if (!event.target.muted) event.target.muted = true;
+      if (event.target.volume !== 0) event.target.volume = 0;
     },
     true,
   );
