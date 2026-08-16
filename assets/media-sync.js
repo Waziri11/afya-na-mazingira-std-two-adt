@@ -2,13 +2,10 @@
   "use strict";
 
   const PLAY_LABELS = new Set(["Sitisha", "Pause"]);
-  const START_LABELS = new Set([
-    "Cheza",
-    "Play",
-    "Washa maandishi kwa sauti",
-  ]);
+  const START_LABELS = new Set(["Cheza", "Play"]);
   const PAUSE_LABELS = new Set(["Sitisha", "Pause"]);
   const STOP_LABELS = new Set(["Simamisha", "Stop"]);
+  const SIGN_LANGUAGE_LABELS = new Set(["Lugha ya ishara", "Sign language"]);
   const RATE_LABELS = {
     Polepole: 0.75,
     Kawaida: 1,
@@ -19,6 +16,7 @@
   let sessionActive = false;
   let updateQueued = false;
   let deferAutomaticPauseUntil = 0;
+  let pendingPlayUntil = 0;
 
   const buttonName = (button) =>
     (button?.getAttribute?.("aria-label") || button?.textContent || "").trim();
@@ -34,6 +32,16 @@
         STOP_LABELS.has(buttonName(button)),
       ),
     );
+
+  const signLanguageButton = () =>
+    Array.from(document.querySelectorAll("button")).find((button) =>
+      SIGN_LANGUAGE_LABELS.has(buttonName(button)),
+    );
+
+  const showSignLanguageVideo = () => {
+    const button = signLanguageButton();
+    if (button && button.getAttribute("aria-pressed") !== "true") button.click();
+  };
 
   const selectedRate = (dialog) => {
     const checked = dialog?.querySelector(
@@ -52,7 +60,10 @@
   const synchronize = () => {
     updateQueued = false;
     const signVideo = video();
-    if (!signVideo) return;
+    if (!signVideo) {
+      document.documentElement.dataset.mediaSyncState = "waiting-for-video";
+      return;
+    }
     signVideo.muted = true;
     signVideo.defaultMuted = true;
     signVideo.volume = 0;
@@ -66,9 +77,10 @@
 
     signVideo.playbackRate = selectedRate(dialog);
 
-    if (audioIsPlaying) {
+    if (audioIsPlaying || performance.now() < pendingPlayUntil) {
       if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
       sessionActive = true;
+      document.documentElement.dataset.mediaSyncState = "playing";
       const playPromise = signVideo.play();
       if (playPromise?.catch) playPromise.catch(() => {});
       return;
@@ -76,6 +88,7 @@
 
     if (performance.now() < deferAutomaticPauseUntil) return;
     signVideo.pause();
+    document.documentElement.dataset.mediaSyncState = "paused";
     if (!dialog) sessionActive = false;
   };
 
@@ -90,22 +103,28 @@
     (event) => {
       const button = event.target.closest?.("button");
       const name = buttonName(button);
-      const signVideo = video();
 
-      if (button && START_LABELS.has(name) && signVideo) {
-        signVideo.muted = true;
-        signVideo.defaultMuted = true;
-        signVideo.volume = 0;
-        signVideo.playsInline = true;
-        if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
-        signVideo.playbackRate = selectedRate(readAloudDialog());
+      if (button && START_LABELS.has(name)) {
+        pendingPlayUntil = performance.now() + 1500;
+        deferAutomaticPauseUntil = pendingPlayUntil;
+        showSignLanguageVideo();
+        const signVideo = video();
+        if (signVideo) {
+          signVideo.muted = true;
+          signVideo.defaultMuted = true;
+          signVideo.volume = 0;
+          signVideo.playsInline = true;
+          if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
+          signVideo.playbackRate = selectedRate(readAloudDialog());
+          const playPromise = signVideo.play();
+          if (playPromise?.catch) playPromise.catch(() => {});
+        }
         sessionActive = true;
-        deferAutomaticPauseUntil = performance.now() + 1500;
-        const playPromise = signVideo.play();
-        if (playPromise?.catch) playPromise.catch(() => {});
       }
 
+      const signVideo = video();
       if (button && PAUSE_LABELS.has(name) && signVideo) {
+        pendingPlayUntil = 0;
         deferAutomaticPauseUntil = 0;
         signVideo.pause();
       }
@@ -115,6 +134,8 @@
           signVideo.pause();
           signVideo.currentTime = 0;
         }
+        pendingPlayUntil = 0;
+        deferAutomaticPauseUntil = 0;
         sessionActive = false;
       }
       scheduleSync();
