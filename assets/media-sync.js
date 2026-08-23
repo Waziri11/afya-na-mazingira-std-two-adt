@@ -142,7 +142,17 @@
       const name = buttonName(button);
 
       if (button && START_LABELS.has(name)) {
-        findButton(READ_ALOUD_LABELS)?.click();
+        const enableReadAloud = findButton(READ_ALOUD_LABELS);
+        if (enableReadAloud) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          enableReadAloud.click();
+          queueMicrotask(() => {
+            const refreshedDialog = readAloudDialog();
+            findButton(START_LABELS, refreshedDialog || document)?.click();
+          });
+          return;
+        }
         pendingPlayUntil = performance.now() + 1500;
         deferAutomaticPauseUntil = pendingPlayUntil;
         showSignLanguageVideo();
