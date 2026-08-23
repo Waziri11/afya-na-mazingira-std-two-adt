@@ -22,7 +22,7 @@
   let deferAutomaticPauseUntil = 0;
   let pendingPlayUntil = 0;
   let audioStartRequestedByVideo = false;
-  let ignoreVideoEventsUntil = 0;
+  let videoStartedByAudioUntil = 0;
 
   const buttonName = (button) =>
     (button?.getAttribute?.("aria-label") || button?.textContent || "").trim();
@@ -55,10 +55,6 @@
     );
 
   const requestAudioPlaybackFromVideo = () => {
-    const now = performance.now();
-    pendingPlayUntil = now + 2500;
-    deferAutomaticPauseUntil = pendingPlayUntil;
-
     const dialog = readAloudDialog();
     if (dialog && findButton(PLAY_LABELS, dialog)) return;
 
@@ -121,14 +117,13 @@
       if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
       sessionActive = true;
       document.documentElement.dataset.mediaSyncState = "playing";
-      ignoreVideoEventsUntil = performance.now() + 500;
+      videoStartedByAudioUntil = performance.now() + 1000;
       const playPromise = signVideo.play();
       if (playPromise?.catch) playPromise.catch(() => {});
       return;
     }
 
     if (performance.now() < deferAutomaticPauseUntil) return;
-    ignoreVideoEventsUntil = performance.now() + 500;
     signVideo.pause();
     document.documentElement.dataset.mediaSyncState = "paused";
     if (!dialog) sessionActive = false;
@@ -158,7 +153,7 @@
           signVideo.playsInline = true;
           if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
           signVideo.playbackRate = selectedRate(readAloudDialog());
-          ignoreVideoEventsUntil = performance.now() + 500;
+          videoStartedByAudioUntil = performance.now() + 1000;
           const playPromise = signVideo.play();
           if (playPromise?.catch) playPromise.catch(() => {});
         }
@@ -169,18 +164,17 @@
       if (button && PAUSE_LABELS.has(name) && signVideo) {
         pendingPlayUntil = 0;
         deferAutomaticPauseUntil = 0;
-        ignoreVideoEventsUntil = performance.now() + 500;
         signVideo.pause();
       }
 
       if (button && STOP_LABELS.has(buttonName(button))) {
         if (signVideo) {
-          ignoreVideoEventsUntil = performance.now() + 500;
           signVideo.pause();
           signVideo.currentTime = 0;
         }
         pendingPlayUntil = 0;
         deferAutomaticPauseUntil = 0;
+        audioStartRequestedByVideo = false;
         sessionActive = false;
       }
       scheduleSync();
@@ -192,21 +186,8 @@
     "play",
     (event) => {
       if (event.target?.tagName !== "VIDEO") return;
-      if (performance.now() < ignoreVideoEventsUntil) return;
+      if (performance.now() < videoStartedByAudioUntil) return;
       requestAudioPlaybackFromVideo();
-    },
-    true,
-  );
-
-  document.addEventListener(
-    "pause",
-    (event) => {
-      if (event.target?.tagName !== "VIDEO") return;
-      if (event.target.ended || performance.now() < ignoreVideoEventsUntil) return;
-      pendingPlayUntil = 0;
-      deferAutomaticPauseUntil = 0;
-      const dialog = readAloudDialog();
-      findButton(PAUSE_LABELS, dialog || document)?.click();
     },
     true,
   );
