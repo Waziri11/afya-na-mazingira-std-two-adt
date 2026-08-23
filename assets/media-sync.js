@@ -43,6 +43,17 @@
     if (button && button.getAttribute("aria-pressed") !== "true") button.click();
   };
 
+  // The stock reader treats any playing video as competing media and pauses
+  // narration. Sign-language video is a synchronized visual track, so keep its
+  // media event from reaching that global exclusivity handler.
+  document.addEventListener(
+    "play",
+    (event) => {
+      if (event.target?.tagName === "VIDEO") event.stopImmediatePropagation();
+    },
+    true,
+  );
+
   const selectedRate = (dialog) => {
     const checked = dialog?.querySelector(
       '[role="menuitemradio"][aria-checked="true"], [role="menuitemradio"][data-state="checked"]',
