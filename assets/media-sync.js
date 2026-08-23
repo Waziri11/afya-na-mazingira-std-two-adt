@@ -6,6 +6,10 @@
   const PAUSE_LABELS = new Set(["Sitisha", "Pause"]);
   const STOP_LABELS = new Set(["Simamisha", "Stop"]);
   const SIGN_LANGUAGE_LABELS = new Set(["Lugha ya ishara", "Sign language"]);
+  const READ_ALOUD_LABELS = new Set([
+    "Washa maandishi kwa sauti",
+    "Enable read aloud",
+  ]);
   const RATE_LABELS = {
     Polepole: 0.75,
     Kawaida: 1,
@@ -17,6 +21,8 @@
   let updateQueued = false;
   let deferAutomaticPauseUntil = 0;
   let pendingPlayUntil = 0;
+  let audioStartRequestedByVideo = false;
+  let ignoreVideoEventsUntil = 0;
 
   const buttonName = (button) =>
     (button?.getAttribute?.("aria-label") || button?.textContent || "").trim();
@@ -41,6 +47,30 @@
   const showSignLanguageVideo = () => {
     const button = signLanguageButton();
     if (button && button.getAttribute("aria-pressed") !== "true") button.click();
+  };
+
+  const findButton = (labels, root = document) =>
+    Array.from(root.querySelectorAll("button")).find((button) =>
+      labels.has(buttonName(button)),
+    );
+
+  const requestAudioPlaybackFromVideo = () => {
+    const now = performance.now();
+    pendingPlayUntil = now + 2500;
+    deferAutomaticPauseUntil = pendingPlayUntil;
+
+    const dialog = readAloudDialog();
+    if (dialog && findButton(PLAY_LABELS, dialog)) return;
+
+    const playButton = dialog && findButton(START_LABELS, dialog);
+    if (playButton) {
+      playButton.click();
+      return;
+    }
+
+    audioStartRequestedByVideo = true;
+    findButton(READ_ALOUD_LABELS)?.click();
+    scheduleSync();
   };
 
   const selectedRate = (dialog) => {
@@ -75,18 +105,30 @@
       PLAY_LABELS.has(buttonName(button)),
     );
 
+    if (audioIsPlaying) audioStartRequestedByVideo = false;
+    if (audioStartRequestedByVideo) {
+      const playButton = dialog && findButton(START_LABELS, dialog);
+      if (playButton) {
+        audioStartRequestedByVideo = false;
+        playButton.click();
+        return;
+      }
+    }
+
     signVideo.playbackRate = selectedRate(dialog);
 
     if (audioIsPlaying || performance.now() < pendingPlayUntil) {
       if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
       sessionActive = true;
       document.documentElement.dataset.mediaSyncState = "playing";
+      ignoreVideoEventsUntil = performance.now() + 500;
       const playPromise = signVideo.play();
       if (playPromise?.catch) playPromise.catch(() => {});
       return;
     }
 
     if (performance.now() < deferAutomaticPauseUntil) return;
+    ignoreVideoEventsUntil = performance.now() + 500;
     signVideo.pause();
     document.documentElement.dataset.mediaSyncState = "paused";
     if (!dialog) sessionActive = false;
@@ -116,6 +158,7 @@
           signVideo.playsInline = true;
           if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
           signVideo.playbackRate = selectedRate(readAloudDialog());
+          ignoreVideoEventsUntil = performance.now() + 500;
           const playPromise = signVideo.play();
           if (playPromise?.catch) playPromise.catch(() => {});
         }
@@ -126,11 +169,13 @@
       if (button && PAUSE_LABELS.has(name) && signVideo) {
         pendingPlayUntil = 0;
         deferAutomaticPauseUntil = 0;
+        ignoreVideoEventsUntil = performance.now() + 500;
         signVideo.pause();
       }
 
       if (button && STOP_LABELS.has(buttonName(button))) {
         if (signVideo) {
+          ignoreVideoEventsUntil = performance.now() + 500;
           signVideo.pause();
           signVideo.currentTime = 0;
         }
@@ -139,6 +184,29 @@
         sessionActive = false;
       }
       scheduleSync();
+    },
+    true,
+  );
+
+  document.addEventListener(
+    "play",
+    (event) => {
+      if (event.target?.tagName !== "VIDEO") return;
+      if (performance.now() < ignoreVideoEventsUntil) return;
+      requestAudioPlaybackFromVideo();
+    },
+    true,
+  );
+
+  document.addEventListener(
+    "pause",
+    (event) => {
+      if (event.target?.tagName !== "VIDEO") return;
+      if (event.target.ended || performance.now() < ignoreVideoEventsUntil) return;
+      pendingPlayUntil = 0;
+      deferAutomaticPauseUntil = 0;
+      const dialog = readAloudDialog();
+      findButton(PAUSE_LABELS, dialog || document)?.click();
     },
     true,
   );
