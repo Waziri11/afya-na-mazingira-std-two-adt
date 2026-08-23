@@ -140,7 +140,7 @@
       }
       scheduleSync();
     },
-    true,
+    false,
   );
 
   document.addEventListener(
