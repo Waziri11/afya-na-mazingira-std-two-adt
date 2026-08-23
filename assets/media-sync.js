@@ -142,6 +142,7 @@
       const name = buttonName(button);
 
       if (button && START_LABELS.has(name)) {
+        findButton(READ_ALOUD_LABELS)?.click();
         pendingPlayUntil = performance.now() + 1500;
         deferAutomaticPauseUntil = pendingPlayUntil;
         showSignLanguageVideo();
