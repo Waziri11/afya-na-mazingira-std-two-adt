@@ -6,10 +6,6 @@
   const PAUSE_LABELS = new Set(["Sitisha", "Pause"]);
   const STOP_LABELS = new Set(["Simamisha", "Stop"]);
   const SIGN_LANGUAGE_LABELS = new Set(["Lugha ya ishara", "Sign language"]);
-  const READ_ALOUD_LABELS = new Set([
-    "Washa maandishi kwa sauti",
-    "Enable read aloud",
-  ]);
   const RATE_LABELS = {
     Polepole: 0.75,
     Kawaida: 1,
@@ -21,8 +17,6 @@
   let updateQueued = false;
   let deferAutomaticPauseUntil = 0;
   let pendingPlayUntil = 0;
-  let audioStartRequestedByVideo = false;
-  let videoStartedByAudioUntil = 0;
 
   const buttonName = (button) =>
     (button?.getAttribute?.("aria-label") || button?.textContent || "").trim();
@@ -47,26 +41,6 @@
   const showSignLanguageVideo = () => {
     const button = signLanguageButton();
     if (button && button.getAttribute("aria-pressed") !== "true") button.click();
-  };
-
-  const findButton = (labels, root = document) =>
-    Array.from(root.querySelectorAll("button")).find((button) =>
-      labels.has(buttonName(button)),
-    );
-
-  const requestAudioPlaybackFromVideo = () => {
-    const dialog = readAloudDialog();
-    if (dialog && findButton(PLAY_LABELS, dialog)) return;
-
-    const playButton = dialog && findButton(START_LABELS, dialog);
-    if (playButton) {
-      playButton.click();
-      return;
-    }
-
-    audioStartRequestedByVideo = true;
-    findButton(READ_ALOUD_LABELS)?.click();
-    scheduleSync();
   };
 
   const selectedRate = (dialog) => {
@@ -101,23 +75,12 @@
       PLAY_LABELS.has(buttonName(button)),
     );
 
-    if (audioIsPlaying) audioStartRequestedByVideo = false;
-    if (audioStartRequestedByVideo) {
-      const playButton = dialog && findButton(START_LABELS, dialog);
-      if (playButton) {
-        audioStartRequestedByVideo = false;
-        playButton.click();
-        return;
-      }
-    }
-
     signVideo.playbackRate = selectedRate(dialog);
 
     if (audioIsPlaying || performance.now() < pendingPlayUntil) {
       if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
       sessionActive = true;
       document.documentElement.dataset.mediaSyncState = "playing";
-      videoStartedByAudioUntil = performance.now() + 1000;
       const playPromise = signVideo.play();
       if (playPromise?.catch) playPromise.catch(() => {});
       return;
@@ -142,17 +105,6 @@
       const name = buttonName(button);
 
       if (button && START_LABELS.has(name)) {
-        const enableReadAloud = findButton(READ_ALOUD_LABELS);
-        if (enableReadAloud) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          enableReadAloud.click();
-          queueMicrotask(() => {
-            const refreshedDialog = readAloudDialog();
-            findButton(START_LABELS, refreshedDialog || document)?.click();
-          });
-          return;
-        }
         pendingPlayUntil = performance.now() + 1500;
         deferAutomaticPauseUntil = pendingPlayUntil;
         showSignLanguageVideo();
@@ -164,7 +116,6 @@
           signVideo.playsInline = true;
           if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
           signVideo.playbackRate = selectedRate(readAloudDialog());
-          videoStartedByAudioUntil = performance.now() + 1000;
           const playPromise = signVideo.play();
           if (playPromise?.catch) playPromise.catch(() => {});
         }
@@ -185,20 +136,9 @@
         }
         pendingPlayUntil = 0;
         deferAutomaticPauseUntil = 0;
-        audioStartRequestedByVideo = false;
         sessionActive = false;
       }
       scheduleSync();
-    },
-    true,
-  );
-
-  document.addEventListener(
-    "play",
-    (event) => {
-      if (event.target?.tagName !== "VIDEO") return;
-      if (performance.now() < videoStartedByAudioUntil) return;
-      requestAudioPlaybackFromVideo();
     },
     true,
   );
