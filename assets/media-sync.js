@@ -107,19 +107,22 @@
       if (button && START_LABELS.has(name)) {
         pendingPlayUntil = performance.now() + 1500;
         deferAutomaticPauseUntil = pendingPlayUntil;
-        showSignLanguageVideo();
-        const signVideo = video();
-        if (signVideo) {
-          signVideo.muted = true;
-          signVideo.defaultMuted = true;
-          signVideo.volume = 0;
-          signVideo.playsInline = true;
-          if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
-          signVideo.playbackRate = selectedRate(readAloudDialog());
-          const playPromise = signVideo.play();
-          if (playPromise?.catch) playPromise.catch(() => {});
-        }
-        sessionActive = true;
+        window.setTimeout(() => {
+          showSignLanguageVideo();
+          const signVideo = video();
+          if (signVideo) {
+            signVideo.muted = true;
+            signVideo.defaultMuted = true;
+            signVideo.volume = 0;
+            signVideo.playsInline = true;
+            if (!sessionActive || signVideo.ended) signVideo.currentTime = 0;
+            signVideo.playbackRate = selectedRate(readAloudDialog());
+            const playPromise = signVideo.play();
+            if (playPromise?.catch) playPromise.catch(() => {});
+          }
+          sessionActive = true;
+          scheduleSync();
+        }, 0);
       }
 
       const signVideo = video();
