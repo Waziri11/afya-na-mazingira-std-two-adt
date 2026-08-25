@@ -1,6 +1,6 @@
 {
   "title": "Afya na Mazingira",
-  "bundleVersion": "17",
+  "bundleVersion": "18",
   "languages": {
     "available": [
       "sw",
@@ -9,7 +9,7 @@
     "default": "sw"
   },
   "features": {
-    "signLanguage": true,
+    "signLanguage": false,
     "easyRead": true,
     "glossary": true,
     "eli5": false,
